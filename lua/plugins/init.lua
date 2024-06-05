@@ -30,9 +30,10 @@ return {
     "nvim-treesitter/nvim-treesitter",
     opts = {
       ensure_installed = {
-        "vim", "lua", "vimdoc",
-            "html", "css",
-            "python"
+        "vim", "lua", "vimdoc", -- Vim
+        "markdown", "json", "yaml", "toml", -- Data formats
+        "html", "css", "javascript", "typescript", -- Web technologies
+        "python",  -- Python
       },
     },
   },
@@ -40,18 +41,13 @@ return {
   {
     "github/copilot.vim",
     lazy = false,
-    -- config = function()  -- Mapping tab is already used by NvChad
-    --   vim.g.copilot_no_tab_map = true;
-    --   vim.g.copilot_assume_mapped = true;
-    --   vim.g.copilot_tab_fallback = "";
-    -- -- The mapping is set to other key, see custom/lua/mappings
-    -- -- or run <leader>ch to see copilot mapping section
-    -- end
+    config = function()  -- Mapping tab is already used by NvChad
+      vim.g.copilot_no_tab_map = true;
+      vim.g.copilot_assume_mapped = true;
+      vim.g.copilot_tab_fallback = "";
+    end
   },
 
-  {
-    "hrsh7th/nvim-cmp",
-    enabled = false
-  }
 }
+
 
