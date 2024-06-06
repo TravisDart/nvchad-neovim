@@ -30,14 +30,14 @@ return {
     "nvim-treesitter/nvim-treesitter",
     opts = {
       ensure_installed = {
-        "vim", "lua", "vimdoc",  -- Vim
-        "markdown", "json", "yaml", "toml",  -- Static Data
+        "vim", "lua", "vimdoc", -- Vim
+        "markdown", "json", "yaml", "toml", -- Data formats
         "html", "css", "javascript", "typescript", -- Web technologies
-        "python"  -- Python
+        "python",  -- Python
       },
     },
   },
-  
+
   {
     "github/copilot.vim",
     lazy = false,
@@ -47,5 +47,6 @@ return {
       vim.g.copilot_tab_fallback = "";
     end
   },
+
 }
 
