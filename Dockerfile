@@ -26,4 +26,4 @@ RUN nvim --headless +"Lazy! sync" +"Lazy! load nvim-treesitter" \
     +qa!
 
 WORKDIR /root/workspace
-ENTRYPOINT ["nvim"]
+CMD ["nvim"]
