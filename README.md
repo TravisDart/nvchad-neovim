@@ -25,9 +25,11 @@ import numpy
 numpy.linalg
 EOF
 
-nvim
+nvim example.py
 '
 ```
+
+Edit the example file to test the Python autocomplete and formatting. Save the file to format it.) 
 
 This is similar to the Docker-based preview in the [nvChad documentation](https://nvchad.com/docs/quickstart/install#install), but using the container from this project, you can try features like autocomplete and formatting without having to first invest time learning and customizing the config. 
 
@@ -84,7 +86,7 @@ Neovim needs to reference your external dependencies for features such as autoco
 
   See the "Build" section below on how to build the container.
 
-Note: In general, that you can't create a virtual environment on the host, then activate it from the container. This would require creating the virtual environment using relative links, which are [not supposed on MacOS](https://github.com/pyenv/pyenv-virtualenv/pull/433). But, on some platforms this could theoretically be possible, and it would be pretty convenient in certain cases.
+Note: In general, you can't create a virtual environment on the host, then activate it from the container. This would require creating the virtual environment using relative links, which are [not supposed on MacOS](https://github.com/pyenv/pyenv-virtualenv/pull/433). But, on some platforms this could theoretically be possible, and it would be pretty convenient in certain cases.
 
 
 
