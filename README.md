@@ -64,11 +64,11 @@ Neovim needs to reference your external dependencies for features such as autoco
 * Method 1: Install the venv as an in-line script. This is the quickest method.
 
   ```
-  docker run -w /root -it --rm travisdart/nvchad-neovim sh -uelic '
+  docker run -w /root/workspace -it --name neovim --volume .:/root/workspace travisdart/nvchad-neovim  sh -uelic '
   python -m venv /root/workspace_venv
   source /root/workspace_venv/bin/activate
   pip install -r requirements.txt
-  nvim
+  nvim example3.py
   '
   ```
 
@@ -77,13 +77,23 @@ Neovim needs to reference your external dependencies for features such as autoco
   ```
   FROM travisdart/nvchad-neovim:latest
   
+  ARG GIT_AUTHOR_EMAIL
+  ARG GIT_AUTHOR_NAME
+  
+  # Check if both build args are provided, otherwise don't configure git.
+  RUN if [ -n "$GIT_AUTHOR_EMAIL" ] && [ -n "$GIT_AUTHOR_NAME" ]; then \
+      git config --global user.email "$GIT_AUTHOR_EMAIL" && \
+      git config --global user.name "$GIT_AUTHOR_NAME" \
+      ; \
+  fi
+  
   RUN python -m venv /root/workspace_venv
   COPY requirements.txt /root/requirements.txt
-  RUN pip install -r /root/requirements.txt
+  RUN /root/workspace_venv/bin/pip install -r /root/requirements.txt
   
-  ENTRYPOINT "source /root/workspace_venv/bin/activate && nvim"
+  CMD ["/bin/sh", "-c", "source /root/workspace_venv/bin/activate; nvim"]
   ```
-
+  
   See the "Build" section below on how to build the container.
 
 Note: In general, you can't create a virtual environment on the host, then activate it from the container. This would require creating the virtual environment using relative links, which are [not supposed on MacOS](https://github.com/pyenv/pyenv-virtualenv/pull/433). But, on some platforms this could theoretically be possible, and it would be pretty convenient in certain cases.
@@ -92,7 +102,7 @@ Note: In general, you can't create a virtual environment on the host, then activ
 
 ## Build:
 
-Note: Since the `GIT_AUTHOR_*` settings are generally invariant, so they can be set at build time.
+Note: The `GIT_AUTHOR_*` settings are generally invariant, so they can be set at build time.
 
 ```
 docker build -t neovim-image \
