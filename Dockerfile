@@ -1,7 +1,7 @@
 FROM alpine:latest
 
-ARG GIT_CONFIG_EMAIL
-ARG GIT_CONFIG_NAME
+ARG GIT_AUTHOR_EMAIL
+ARG GIT_AUTHOR_NAME
 
 RUN apk add --no-cache git nodejs neovim ripgrep build-base curl \
     stylua \
@@ -15,7 +15,8 @@ RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/te
 # Check if both build args are provided, otherwise don't configure git.
 RUN if [ -n "$GIT_AUTHOR_EMAIL" ] && [ -n "$GIT_AUTHOR_NAME" ]; then \
     git config --global user.email "$GIT_AUTHOR_EMAIL" && \
-    git config --global user.name "$GIT_AUTHOR_NAME"; \
+    git config --global user.name "$GIT_AUTHOR_NAME" \
+    ; \
 fi
 
 RUN mkdir -p /root/.config/nvim
