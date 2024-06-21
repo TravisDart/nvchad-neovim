@@ -2,17 +2,13 @@
 
 This is a turnkey Python IDE using Neovim and Docker. With this container, setting up Vim is one Docker command, instead of requiring manual configuration and setup.
 
-Other advantages of a containerized dev environment:
-
-* Create many simultaneous development environments for different branches using this container with virtual machines or Kubernetes.
-* Easily package a containerized reference IDE with your project. Even if developers choose another IDE, they can reference the Vim container for the setup requirements.
-* Use this dev container to A/B test your dev environment. If something breaks in your primary IDE, this container allows you to quickly spin up a 2nd environment to see if the issue exists there, as well.
+Containerizing Neovim streamlines the Neovim setup process and lowers the bar to entry for new users. But, beyond the traditional use cases, it opens new possibilities, as well. Using this container with virtual machines or Kubernetes, you can create many simultaneous development environments for multiple branches, similar to self-hosted GitHub Codespaces. Or, you can streamline developer onboarding by including a containerized "reference IDE".
 
 
 
 ## Quickstart:
 
-Run these lines to create a minimal Python project and start Neovim:
+Run this command to create a minimal Python project and start Neovim:
 
 ```
 docker run -w /root -it --rm travisdart/nvchad-neovim sh -uelic '
@@ -29,80 +25,65 @@ nvim example.py
 '
 ```
 
-Edit the example file to test the Python autocomplete and formatting. Save the file to format it.) 
-
-This is similar to the Docker-based preview in the [nvChad documentation](https://nvchad.com/docs/quickstart/install#install), but using the container from this project, you can try features like autocomplete and formatting without having to first invest time learning and customizing the config. 
+Once Vim launches, the example file provides a sandbox to try features such as Python autocomplete and formatting, and features from nvChad. This is similar to the Docker-based preview in the [nvChad documentation](https://nvchad.com/docs/quickstart/install#install), but there aren't any IDE features enabled with the default nvChad configuration. Also note that nvChad makes you wait for plugins to install on the first start, while this container loads plugins at buildtime, rather than runtime.
 
 
 
-## Typical Usage:
+## Typical Use Case:
 
-To use with an existing Python project, start the Neovim container in the root directory of your project. Your project will be mounted in the `/root/workspace` directory inside the container.
+To use with an existing Python project, start the Neovim container in the root directory of your project using the command below. Your project will be mounted in the `/root/workspace` directory inside the container. Before Neovim starts, you can also install any external Python dependencies. - Neovim needs to reference your external dependencies for features such as autocomplete, so project dependencies must be added to the Neovim container.
 
 ```
 cd your_project
 
-docker run -it --name neovim --volume .:/root/workspace \
+docker run -w /root/workspace -it --name neovim --volume .:/root/workspace \
     --env GIT_AUTHOR_EMAIL=you@example.com \
     --env GIT_AUTHOR_NAME="Your Name" \
     --env GH_TOKEN=$GH_TOKEN \
-    travisdart/nvchad-neovim
+    travisdart/nvchad-neovim sh -uelic '
+     python -m venv /root/workspace_venv
+     source /root/workspace_venv/bin/activate
+     pip install -r requirements.txt
+     nvim example3.py
+    '
 ```
+
+Note: In general, you can't create a virtual environment on the host, then activate it from the container. This would require creating the virtual environment using relative links, which are [not supposed on MacOS](https://github.com/pyenv/pyenv-virtualenv/pull/433). But, on some platforms this could theoretically be possible, and it would be pretty convenient in certain cases.
 
 Optional Features:
 
 * **GitHub Integration:** The GitHub CLI (`gh` command) is included in the container. Authenticate to GitHub by providing an auth token to the `GH_TOKEN` environment variable, as above.
 * **GitHub Copilot:** After Neovim starts, you can enable GitHub Copilot by running `:Copilot setup` from within Neovim. The completion key is mapped to `C-i` since `Tab` is already mapped.
-* **Custom Vim Configurations:** To add customizations to the Vim configuration: clone/fork this repo, make your customizations to the config, and build (see the "Build" section below).
+* **Custom Vim Configurations:** Customizing the Vim configuration can be done in one of two ways:
+  * Use a volume to mount an external configuration directory to the container, e.g. `--volume ~/.config/nvim:/root/.config/nvim`
+  * Build a custom container image: clone/fork the [configuration repo](https://github.com/TravisDart/nvchad-neovim) containing the main Dockerfile, add customizations to the config, then build.
 
 
 
-## External Python Dependencies
+## Advanced Use case:
 
-Neovim needs to reference your external dependencies for features such as autocomplete, so these dependencies must be added to the Neovim container. There are two ways to accomplish this:
+External Python dependencies can also be installed using a Dockerfile. This requires more setup, but is more flexible and simpler to run. This Dockerfile can also be added to your project repo, allowing developers to quickly set up a new dev environment.
 
-* Method 1: Install the venv as an in-line script. This is the quickest method.
+```
+FROM travisdart/nvchad-neovim:latest
 
-  ```
-  docker run -w /root/workspace -it --name neovim --volume .:/root/workspace travisdart/nvchad-neovim  sh -uelic '
-  python -m venv /root/workspace_venv
-  source /root/workspace_venv/bin/activate
-  pip install -r requirements.txt
-  nvim example3.py
-  '
-  ```
+ARG GIT_AUTHOR_EMAIL
+ARG GIT_AUTHOR_NAME
 
-* Method 2: Overlay the image. This method requires a little more setup, but is useful for including a reproducible IDE alongside your Python project.
+RUN if [ -n "$GIT_AUTHOR_EMAIL" ] && [ -n "$GIT_AUTHOR_NAME" ]; then \
+    git config --global user.email "$GIT_AUTHOR_EMAIL" && \
+    git config --global user.name "$GIT_AUTHOR_NAME" \
+    ; \
+fi
 
-  ```
-  FROM travisdart/nvchad-neovim:latest
-  
-  ARG GIT_AUTHOR_EMAIL
-  ARG GIT_AUTHOR_NAME
-  
-  # Check if both build args are provided, otherwise don't configure git.
-  RUN if [ -n "$GIT_AUTHOR_EMAIL" ] && [ -n "$GIT_AUTHOR_NAME" ]; then \
-      git config --global user.email "$GIT_AUTHOR_EMAIL" && \
-      git config --global user.name "$GIT_AUTHOR_NAME" \
-      ; \
-  fi
-  
-  RUN python -m venv /root/workspace_venv
-  COPY requirements.txt /root/requirements.txt
-  RUN /root/workspace_venv/bin/pip install -r /root/requirements.txt
-  
-  CMD ["/bin/sh", "-c", "source /root/workspace_venv/bin/activate; nvim"]
-  ```
-  
-  See the "Build" section below on how to build the container.
+RUN python -m venv /root/workspace_venv
+COPY requirements.txt /root/requirements.txt
+RUN /root/workspace_venv/bin/pip install -r /root/requirements.txt
 
-Note: In general, you can't create a virtual environment on the host, then activate it from the container. This would require creating the virtual environment using relative links, which are [not supposed on MacOS](https://github.com/pyenv/pyenv-virtualenv/pull/433). But, on some platforms this could theoretically be possible, and it would be pretty convenient in certain cases.
+CMD ["/bin/sh", "-c", "source /root/workspace_venv/bin/activate; nvim"]
+```
 
-
-
-## Build:
-
-Note: The `GIT_AUTHOR_*` settings are generally invariant, so they can be set at build time.
+Build the Dockerfile and run:
 
 ```
 docker build -t neovim-image \
@@ -115,8 +96,12 @@ docker run -it --name neovim --volume .:/root/workspace \
     neovim-image
 ```
 
+Note that the `GIT_AUTHOR_*` settings are generally invariant, so they can be set at build time.
 
 
-## Todo:
 
-* Add integration to the host clipboard. (Currently copy/paste is scoped to the container and won't populate the host's clipboard.)
+## Todo / Further Considerations:
+
+* Better integration with the host clipboard is needed. Vim is not as integrated with the host when it runs in a container. In particular, access to the host clipboard relies on the terminal emulator attached to the container. This is a somewhat imperfect integration, compared to running Vim natively. A solution such as [Clipper](https://github.com/wincent/clipper) sort-of provides integration on Mac and Linux hosts, but still has certain drawbacks.
+* Vim users often try to optimize their config to minimize the startup time, and there is significantly greater overhead to start a container vs running natively. If this is a concern, one solution may be use [nvr](https://github.com/mhinz/neovim-remote) to attach to the already-running Neovim instance. But, as the container's path differs from the local path, an additional wrapper around nvr would be required to translate paths.
+* While all other editor setup is done automatically, you may notice GitHub Copilot users must still authenticate to GitHub manually before editing. The GitHub CLI  can authenticate using a token. So it would be ideal if Copilot could use a token for authentication, as well. (Also, because Neovim runs in the terminal, some environments won't have a browser available for the `:Copilot setup` authentication.) I have created [feature request](https://github.com/orgs/community/discussions/127418) for this.
