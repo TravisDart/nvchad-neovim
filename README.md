@@ -37,14 +37,16 @@ To use with an existing Python project, start the Neovim container in the root d
 cd your_project
 
 docker run -w /root/workspace -it --name neovim --volume .:/root/workspace \
-    --env GIT_AUTHOR_EMAIL=you@example.com \
+    --env GIT_AUTHOR_EMAIL="you@example.com" \
     --env GIT_AUTHOR_NAME="Your Name" \
     --env GH_TOKEN=$GH_TOKEN \
     travisdart/nvchad-neovim sh -uelic '
+     git config --global user.email "$GIT_AUTHOR_EMAIL"
+     git config --global user.name "$GIT_AUTHOR_NAME"
      python -m venv /root/workspace_venv
      source /root/workspace_venv/bin/activate
      pip install -r requirements.txt
-     nvim example3.py
+     nvim
     '
 ```
 
@@ -87,8 +89,8 @@ Build the Dockerfile and run:
 
 ```
 docker build -t neovim-image \
-    --build-arg GIT_AUTHOR_NAME=you@example.com \
-    --build-arg GIT_AUTHOR_EMAIL="Your Name" \
+    --build-arg GIT_AUTHOR_EMAIL="you@example.com" \
+    --build-arg GIT_AUTHOR_NAME="Your Name" \
     .
 
 docker run -it --name neovim --volume .:/root/workspace \
