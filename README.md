@@ -1,3 +1,7 @@
+This is the testing branch. It contains files that users don't need to clone to use Neovim.
+
+---
+
 # Neovim (nvChad) Docker Container
 
 This is a turnkey Python IDE using Neovim and Docker. With this container, setting up Vim is one Docker command, instead of requiring manual configuration and setup.
