@@ -9,6 +9,7 @@ pyenv activate neovim-test
 pip install -r requirements.txt
 
 # Run tests:
+export CONTAINER_GH_TOKEN='...'
 pytest
 ```
 
@@ -17,4 +18,3 @@ pytest
 * Reduce repetition in tests
 * Integrate a CI solution and separate test tasks from CI tasks.
 * Containerize the test runner
-* 
