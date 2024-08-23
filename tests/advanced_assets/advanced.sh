@@ -1,5 +1,7 @@
 #!/bin/bash
 
+# This script is for manual testing and isn't called by pytest.
+
 cd "$(dirname "$0")"
 
 if [[ -z "$1" ]]; then
@@ -28,14 +30,14 @@ else
     LOCAL_GIT_AUTHOR_NAME="$4"
 fi
 
-docker build --progress=plain -t neovim-overlay-image \
+docker build --no-cache --progress=plain -t neovim-overlay-image \
     --build-arg GIT_AUTHOR_EMAIL="$LOCAL_GIT_AUTHOR_EMAIL" \
     --build-arg GIT_AUTHOR_NAME="$LOCAL_GIT_AUTHOR_NAME" \
     .
 
 docker run -it --rm --volume .:/root/workspace \
     -e GH_TOKEN="$GH_TOKEN" \
-    neovim-image
+    neovim-overlay-image
 
 # Things to test:
 # Test the normal autocomplete
@@ -44,4 +46,5 @@ docker run -it --rm --volume .:/root/workspace \
 # :!git config --global user.email
 # :!git config --global user.name 
 
+# Clean up afterwords:
 docker rmi neovim-overlay-image

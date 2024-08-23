@@ -1,8 +1,8 @@
+import os
 import uuid
+
 import libtmux
 import pytest
-import os
-
 
 remote_container_name = "travisdart/nvchad-neovim"
 
@@ -22,6 +22,13 @@ def pytest_addoption(parser):
         help='Name of the local container. Defaults to "neovim".',
     )
 
+    parser.addoption(
+        "--tmux-verbose",
+        action="store_true",
+        default=False,
+        help="Display tmux output",
+    )
+
 
 def pytest_configure(config):
     if config.getoption("--local"):
@@ -30,7 +37,7 @@ def pytest_configure(config):
         config.option.container_name = remote_container_name
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="class")
 def tmux():
     slug = uuid.uuid4()
     session = libtmux.Server(colors=256).new_session(session_name=f"vim_test-{slug}")
@@ -58,3 +65,9 @@ def git_username():
 @pytest.fixture(scope="session")
 def git_email_address():
     return f"{uuid.uuid4()}@example.com"
+
+
+@pytest.fixture(scope="session")
+def tmux_verbose(pytestconfig):
+    """For brevity"""
+    return pytestconfig.getoption("--tmux-verbose")
