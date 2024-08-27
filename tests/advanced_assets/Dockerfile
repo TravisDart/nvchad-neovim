@@ -1,5 +1,5 @@
 FROM neovim-image:latest
-# FROM travisdart/nvchad-neovim:latest
+#FROM travisdart/nvchad-neovim:latest
 
 ARG GIT_AUTHOR_EMAIL
 ARG GIT_AUTHOR_NAME
