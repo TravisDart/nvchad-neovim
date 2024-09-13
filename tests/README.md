@@ -4,13 +4,15 @@
 curl https://pyenv.run | bash
 
 # Set up the venv
-pyenv virtualenv 3 neovim-test
+pyenv install 3.12
+pyenv virtualenv 3.12 neovim-test
 pyenv activate neovim-test
+python -m pip install --upgrade pip
 pip install -r requirements.txt
 
-# Run tests:
-export CONTAINER_GH_TOKEN='...'
-pytest
+# Run tests: (Use -s to include output.)
+export CONTAINER_GH_TOKEN='...' 
+pytest -s
 ```
 
 ## Todo:

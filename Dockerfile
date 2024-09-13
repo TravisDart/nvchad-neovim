@@ -1,11 +1,12 @@
-FROM alpine:latest
+ARG BASE_IMAGE=python:3.12-alpine
+FROM $BASE_IMAGE
 
 ARG GIT_AUTHOR_EMAIL
 ARG GIT_AUTHOR_NAME
 
 RUN apk add --no-cache git nodejs neovim neovim-doc ripgrep build-base curl \
-    stylua  \
-    python3 py3-lsp-server py3-isort black \
+    stylua \
+    py3-lsp-server py3-isort black \
     github-cli \
     --update
 
