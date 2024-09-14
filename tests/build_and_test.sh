@@ -13,7 +13,7 @@ for PYTHON_VERSION in "${PYTHON_VERSIONS[@]}"; do
   echo
   echo "Building $CONTAINER_NAME"
   docker rmi $CONTAINER_NAME
-  docker build -t $CONTAINER_NAME --build-arg PYTHON_VERSION=$PYTHON_VERSION .
+  docker build -t $CONTAINER_NAME --build-arg BASE_IMAGE="python:$PYTHON_VERSION-alpine" .
   
   # Maybe eventually build the "advanced example" container here, as well.
 done

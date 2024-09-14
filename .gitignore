@@ -2,3 +2,4 @@ lazy-lock.json
 .idea/
 .env
 **/__pycache__
+**/venv
