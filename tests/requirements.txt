@@ -1,0 +1,5 @@
+# These are the requirements for the tests themselves, not for the example environments.
+libtmux~=0.37.0
+pytest~=8.3.2
+isort
+black
