@@ -1,5 +1,5 @@
-FROM neovim-image:latest
-#FROM travisdart/nvchad-neovim:latest
+ARG BASE_IMAGE=neovim-image:latest
+FROM $BASE_IMAGE
 
 ARG GIT_AUTHOR_EMAIL
 ARG GIT_AUTHOR_NAME
