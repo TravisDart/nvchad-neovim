@@ -30,12 +30,15 @@ else
     LOCAL_GIT_AUTHOR_NAME="$4"
 fi
 
+# A slight difference: We use "." in the Readme.
+BASE_DIR="/Users/travis.dart/PycharmProjects/nv-chad-starter/tests/typical_assets"
+
 docker build --no-cache --progress=plain -t neovim-overlay-image \
     --build-arg GIT_AUTHOR_EMAIL="$LOCAL_GIT_AUTHOR_EMAIL" \
     --build-arg GIT_AUTHOR_NAME="$LOCAL_GIT_AUTHOR_NAME" \
-    .
+    $BASE_DIR
 
-docker run -it --rm --volume .:/root/workspace \
+docker run -it --rm --volume $BASE_DIR:/root/workspace \
     -e GH_TOKEN="$GH_TOKEN" \
     neovim-overlay-image
 

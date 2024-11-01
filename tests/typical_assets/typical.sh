@@ -31,7 +31,24 @@ fi
 echo "Remove neovim container, if it exists."
 docker rm neovim
 
-docker run -w /root/workspace -it --name neovim --volume .:/root/workspace \
+# This is the command from the README.
+# If we are in a container using the host's Docker socker, the we can't use the volume
+# because `--volume .:/root/workspace` doesn't point to the container.
+#
+# docker run -w /root/workspace -it --name neovim --volume .:/root/workspace \
+# --env GIT_AUTHOR_EMAIL="$LOCAL_GIT_AUTHOR_EMAIL" \
+# --env GIT_AUTHOR_NAME="$LOCAL_GIT_AUTHOR_NAME" \
+# --env GH_TOKEN="$GH_TOKEN" \
+# $CONTAINER_NAME sh -uelic '
+# git config --global user.email "$GIT_AUTHOR_EMAIL"
+# git config --global user.name "$GIT_AUTHOR_NAME"
+# python -m venv /root/workspace_venv
+# source /root/workspace_venv/bin/activate
+# pip install -r requirements.txt
+# nvim
+# '
+
+docker run -w /root/workspace -it --name neovim \
 --env GIT_AUTHOR_EMAIL="$LOCAL_GIT_AUTHOR_EMAIL" \
 --env GIT_AUTHOR_NAME="$LOCAL_GIT_AUTHOR_NAME" \
 --env GH_TOKEN="$GH_TOKEN" \
@@ -40,6 +57,9 @@ git config --global user.email "$GIT_AUTHOR_EMAIL"
 git config --global user.name "$GIT_AUTHOR_NAME"
 python -m venv /root/workspace_venv
 source /root/workspace_venv/bin/activate
-pip install -r requirements.txt
+pip install numpy
+echo "import numpy" > example.py
+echo >> example.py
+echo "numpy.linalg" >> example.py
 nvim
 '
