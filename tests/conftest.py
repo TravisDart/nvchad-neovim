@@ -18,8 +18,12 @@ def pytest_addoption(parser):
 
     parser.addoption(
         "--local-container-name",
-        default="neovim",
-        help='Name of the local container. Defaults to "neovim".',
+        help='Name of the local container.',
+    )
+
+    parser.addoption(
+        "--advanced-example-container-name",
+        help='Name of the local container.',
     )
 
     parser.addoption(

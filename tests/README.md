@@ -15,6 +15,22 @@ export CONTAINER_GH_TOKEN='...'
 pytest -s
 ```
 
+## Manual testing:
+Before manually testing, run these commands:
+```
+docker rmi travisdart/nvchad-neovim:latest
+export GH_TOKEN="..."
+```
+
+Then, run the examples from the readme.
+
+For each example, first test that autocomplete is working.
+
+Then, (for all except the basic example) make sure these commands work:
+* `:!gh auth status`
+* `:!git config --global user.email`
+* `:!git config --global user.name`
+
 ## Todo:
 
 * Reduce repetition in tests
