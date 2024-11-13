@@ -1,18 +1,13 @@
 #!/bin/bash
-
-cd "$(dirname "$0")"
-cd ..
-
-source .env
+source "$(dirname "$0")/00_env.sh"
 
 # Pull down the images so we can test test against what's published.
-PYTHON_VERSIONS=(3.9 3.10 3.11 3.12 latest)
-ALL_TESTS_PASS=TRUE
+PYTHON_VERSIONS+=("latest")
+
 for PYTHON_VERSION in "${PYTHON_VERSIONS[@]}"; do
-  CONTAINER_NAME="travisdart/nvchad-neovim:python$PYTHON_VERSION"
+  CONTAINER_NAME="${PUBLISHED_IMAGE_PREFIX}${PYTHON_VERSION}"
   echo
   echo "Pulling $CONTAINER_NAME"
-  docker rmi $CONTAINER_NAME
   docker pull $CONTAINER_NAME
 done
 

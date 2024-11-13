@@ -16,6 +16,7 @@ class TestAdvancedUseCase(CommonTests):
         tmux_verbose,
         github_token,
         advanced_example_container_name,
+        workspace_volume_name,
     ):
         container_name = f"neovim-{uuid.uuid4()}"
         image_name = "neovim-overlay-image:latest"
@@ -24,7 +25,7 @@ class TestAdvancedUseCase(CommonTests):
             dedent(
                 f"""\
                     docker run -w /root/workspace -it --name {container_name} \
-                    --volume neovim-example-workspace-6d4289a3-8b25-44fa-a0dc-7a6612fecfdf:/root/workspace \
+                    --volume {workspace_volume_name}:/root/workspace \
                     --env GH_TOKEN="{github_token}" \
                     {advanced_example_container_name}
                 """

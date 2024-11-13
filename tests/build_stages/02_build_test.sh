@@ -1,25 +1,11 @@
 #!/bin/bash
-
-cd "$(dirname "$0")"
-source 00_env.sh
-cd ../..
-
-if [[ "$@" == "--published" ]]; then
-  CONTAINER_PREFIX="travisdart/nvchad-neovim:python"
-else
-  CONTAINER_PREFIX="neovim-image:python"
-fi
+source "$(dirname "$0")/00_env.sh"
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-= Build "advanced example" containers -=-=-=-=-=-=-=-=-=-=
-PYTHON_VERSIONS=(3.9 3.10 3.11 3.12)
 for PYTHON_VERSION in "${PYTHON_VERSIONS[@]}"; do
-  BASE_CONTAINER_NAME="${CONTAINER_PREFIX}${PYTHON_VERSION}"
-  CONTAINER_NAME="neovim-overlay-image:python$PYTHON_VERSION"
   echo
-  echo "Building $CONTAINER_NAME"
-  docker rmi $CONTAINER_NAME
-
-  docker build --no-cache --progress=plain -t $CONTAINER_NAME \
+  echo "Building ADVANCED_TEST_CONTAINER_NAME"
+  docker build --no-cache --progress=plain -t ADVANCED_TEST_CONTAINER_NAME \
   --build-arg GIT_AUTHOR_EMAIL=$GIT_AUTHOR_EMAIL \
   --build-arg GIT_AUTHOR_NAME=$GIT_AUTHOR_NAME \
   --build-arg BASE_IMAGE=$BASE_CONTAINER_NAME \
@@ -27,10 +13,10 @@ for PYTHON_VERSION in "${PYTHON_VERSIONS[@]}"; do
   ./tests/advanced_example/
 done
 
-# -=-=-=-=-=-=-=-=-=-=-=-=-= Build the test container and volume -=-=-=-=-=-=-=-=-=-=
-docker rmi neovim-pytest-image
-docker build -t neovim-pytest-image -f ./tests/pytest.Dockerfile .
+# -=-=-=-=-=-=-=-=-=-=-=-=-= Build the pytest container -=-=-=-=-=-=-=-=-=-=
+docker build -t $PYTEST_CONTAINER_NAME -f ./tests/pytest.Dockerfile .
 
+# -=-=-=-=-=-=-=-=-=-=-=-=-= Build the test volume -=-=-=-=-=-=-=-=-=-=-=-=
 # Create a uniquely-named volume containing the example workspace
 docker volume create $WORKSPACE_VOLUME_NAME
 

@@ -1,18 +1,15 @@
 #!/bin/bash
+source "$(dirname "$0")/00_env.sh"
 
-# This runs from the project root directory.
-cd "$(dirname "$0")"
-cd ../..
+echo "Cleaning up... (Ignore any errors.)"
 
-# Build local containers
-PYTHON_VERSIONS=(3.9 3.10 3.11 3.12)
+docker stop $(docker ps | grep $DOCKER_PREFIX | awk '{print $1}') 2>/dev/null > /dev/null
+docker rm $(docker ps -a | grep $DOCKER_PREFIX | awk '{print $1}') 2>/dev/null > /dev/null
+
 for PYTHON_VERSION in "${PYTHON_VERSIONS[@]}"; do
-  CONTAINER_NAME="neovim-image:python$PYTHON_VERSION"
-  echo "Removing $CONTAINER_NAME"
-  docker rmi $CONTAINER_NAME
-
-  CONTAINER_NAME="neovim-overlay-image:python$PYTHON_VERSION"
-  echo
-  echo "Removing $CONTAINER_NAME"
-  docker rmi $CONTAINER_NAME
+  docker image rm "$PUBLISHED_IMAGE_PREFIX:$PYTHON_VERSION" 2>/dev/null > /dev/null
 done
+docker image rm "$PUBLISHED_IMAGE_PREFIX:latest" 2>/dev/null > /dev/null
+
+docker image rm $(docker images | grep $DOCKER_PREFIX | awk '{print $3}') 2>/dev/null > /dev/null
+docker volume rm $WORKSPACE_VOLUME_NAME 2>/dev/null > /dev/null

@@ -1,32 +1,17 @@
 #!/bin/bash
-
-cd "$(dirname "$0")"
-source 00_env.sh
-cd ../..
-
-echo 
-
-if [[ "$@" == "--published" ]]; then
-  CONTAINER_PREFIX="travisdart/nvchad-neovim:python"
-else
-  CONTAINER_PREFIX="neovim-image:python"
-fi
+source "$(dirname "$0")/00_env.sh"
 
 # -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-= Run the tests -=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
-PYTHON_VERSIONS=(3.9 3.10 3.11 3.12)
 ALL_TESTS_PASS=TRUE
 for PYTHON_VERSION in "${PYTHON_VERSIONS[@]}"; do
-  CONTAINER_NAME="${CONTAINER_PREFIX}${PYTHON_VERSION}"
-  ADVANCED_EXAMPLE_CONTAINER_NAME="neovim-overlay-image:python$PYTHON_VERSION"
-
   echo
-  echo "Testing $CONTAINER_NAME"
+  echo "Testing Python $PYTHON_VERSION image"
 
   docker run -it --rm --env CONTAINER_GH_TOKEN=$CONTAINER_GH_TOKEN  \
-    -v /var/run/docker.sock:/var/run/docker.sock -v ./tests/:/tests2 neovim-pytest-image \
+    -v /var/run/docker.sock:/var/run/docker.sock $PYTEST_CONTAINER_NAME \
     pytest \
-    --local-container-name $CONTAINER_NAME \
-    --advanced-example-container-name $ADVANCED_EXAMPLE_CONTAINER_NAME \
+    --local-container-name "${TEST_CONTAINER_PREFIX}${PYTHON_VERSION}" \
+    --advanced-example-container-name "${ADVANCED_TEST_CONTAINER_PREFIX}${PYTHON_VERSION}" \
     --git-author-email $GIT_AUTHOR_EMAIL \
     --git-author-name $GIT_AUTHOR_NAME \
     --github-token $GH_TOKEN \
@@ -43,5 +28,3 @@ else
   echo "Some tests failed."
   exit 1
 fi
-
-# Note that we don't currently clean up any of the containers.
