@@ -1,24 +1,27 @@
 import time
 from textwrap import dedent
-
-from .utils import wait_for_text
 import pytest
+from .utils import wait_for_text
 
-class TestQuickstart:
+
+class TestBasicAutocomplete:
+    """
+    Move this to the parent directory to include in pytest.
+    We test a more advanced autocomplete in other tests, so we don't need this.
+    """
+
     @pytest.fixture(scope="class")
-    def vim(self, tmux, tmux_verbose):
-        image_name = "neovim-image:latest"
+    def vim(self, tmux, local_container_name):
         tmux.send_keys(
             dedent(
                 f"""\
-            docker run -w /root -it --rm {image_name} sh -uelic '
+            docker run -w /root -it --rm {local_container_name} sh -uelic '
             python -m venv /root/workspace_venv
             . /root/workspace_venv/bin/activate
-            pip install numpy
             cat <<EOF > example.py
-            import numpy
+            import time
             
-            numpy.linalg
+            time
             EOF
             nvim example.py
             '
@@ -36,9 +39,6 @@ class TestQuickstart:
             tmux.send_keys(":qa!")
 
     def test_autocomplete(self, vim, tmux_verbose):
-        # This test is slightly different that the other autocomplete tests in that we dont open the file in the test.
-        # Note that this is done when invoking nvim above.
-        
         # Wait for the editor to load everything. There's no visual indication when this is complete, so just wait.
         # If we enter text before this, autocomplete won't work.
         time.sleep(5)

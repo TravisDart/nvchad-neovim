@@ -1,44 +1,57 @@
-import os
 import uuid
 
 import libtmux
 import pytest
 
-remote_container_name = "travisdart/nvchad-neovim"
-
 
 def pytest_addoption(parser):
-    parser.addoption(
-        "--local",
-        action="store_true",
-        dest="record",
-        default=False,
-        help=f"Use the local neovim container instead of {remote_container_name}",
-    )
-
-    parser.addoption(
-        "--local-container-name",
-        help='Name of the local container.',
-    )
-
-    parser.addoption(
-        "--advanced-example-container-name",
-        help='Name of the local container.',
-    )
-
     parser.addoption(
         "--tmux-verbose",
         action="store_true",
         default=False,
         help="Display tmux output",
     )
+    parser.addoption("--github-token")
+    parser.addoption("--git-author-name")
+    parser.addoption("--git-author-email")
+    parser.addoption("--workspace-volume-name")
+    parser.addoption("--local-container-name")
+    parser.addoption("--advanced-example-container-name")
 
 
-def pytest_configure(config):
-    if config.getoption("--local"):
-        config.option.container_name = config.getoption("--local-container-name")
-    else:
-        config.option.container_name = remote_container_name
+@pytest.fixture(scope="session")
+def github_token(pytestconfig):
+    return pytestconfig.getoption("--github-token")
+
+
+@pytest.fixture(scope="session")
+def git_username(pytestconfig):
+    return pytestconfig.getoption("--git-author-name")
+
+
+@pytest.fixture(scope="session")
+def git_email_address(pytestconfig):
+    return pytestconfig.getoption("--git-author-email")
+
+
+@pytest.fixture(scope="session")
+def workspace_volume_name(pytestconfig):
+    return pytestconfig.getoption("--workspace-volume-name")
+
+
+@pytest.fixture(scope="session")
+def local_container_name(pytestconfig):
+    return pytestconfig.getoption("--local-container-name")
+
+
+@pytest.fixture(scope="session")
+def advanced_example_container_name(pytestconfig):
+    return pytestconfig.getoption("--advanced-example-container-name")
+
+
+@pytest.fixture(scope="session")
+def tmux_verbose(pytestconfig):
+    return pytestconfig.getoption("--tmux-verbose")
 
 
 @pytest.fixture(scope="class")
@@ -54,24 +67,3 @@ def tmux():
         yield pane
     finally:
         session.kill()
-
-
-@pytest.fixture(scope="session")
-def github_token():
-    return os.getenv("CONTAINER_GH_TOKEN")
-
-
-@pytest.fixture(scope="session")
-def git_username():
-    return str(uuid.uuid4())
-
-
-@pytest.fixture(scope="session")
-def git_email_address():
-    return f"{uuid.uuid4()}@example.com"
-
-
-@pytest.fixture(scope="session")
-def tmux_verbose(pytestconfig):
-    """For brevity"""
-    return pytestconfig.getoption("--tmux-verbose")

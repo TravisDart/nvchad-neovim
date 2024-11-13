@@ -22,6 +22,14 @@ docker rmi travisdart/nvchad-neovim:latest
 export GH_TOKEN="..."
 ```
 
+Create an example workspace:
+```
+echo "numpy" > requirements.txt
+echo "import numpy" > example.py
+echo >> example.py
+echo "numpy.linalg" >> example.py
+```
+
 Then, run the examples from the readme.
 
 For each example, first test that autocomplete is working.
