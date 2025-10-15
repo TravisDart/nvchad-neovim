@@ -1,4 +1,6 @@
-<img src="vim_in_a_can.png" alt="vim_in_a_can" style="zoom:50%;" />
+<p align="center">
+<img src="vim_in_a_can.png" alt="vim_in_a_can" width="500" />
+</p>
 
 # Neovim Python IDE in a Container
 
