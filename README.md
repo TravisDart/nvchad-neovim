@@ -1,6 +1,8 @@
-# Neovim (nvChad) Docker Container
+<img src="vim_in_a_can.png" alt="vim_in_a_can" style="zoom:50%;" />
 
-This is a turnkey Python IDE using Neovim and Docker. With this container, setting up Vim is one Docker command, instead of requiring manual configuration and setup.
+# Neovim Python IDE in a Container
+
+This is a turnkey Python IDE using Neovim (nvChad) and Docker. With this container, setting up Vim is one Docker command, instead of requiring manual configuration and setup.
 
 Containerizing Neovim streamlines the Neovim setup process and lowers the bar to entry for new users. It also opens new possibilities beyond the traditional use cases. For example, using this container with virtual machines or Kubernetes, you can create many simultaneous development environments for multiple branches, similar to a self-hosted GitHub Codespaces. Or, you can streamline developer onboarding by including a containerized "reference IDE".
 
@@ -100,7 +102,7 @@ docker run -it --name neovim --volume .:/root/workspace \
 
 Note that the `GIT_AUTHOR_*` settings are generally invariant, so they can be set at build time.
 
-There is [an image on Docker Hub](https://hub.docker.com/r/travisdart/nvchad-neovim/tags) for every currently-supported version of Python: 3.9, 3.10, 3.11, and 3.12. To use another Python version, use an alternate image as the base container: `FROM travisdart/nvchad-neovim:python3.10`. The `:latest` tag is the same as `python3.12`.
+There is [an image on Docker Hub](https://hub.docker.com/r/travisdart/nvchad-neovim/tags) for every currently-supported version of Python: 3.9 through 3.14. To use another Python version, use an alternate image as the base container: `FROM travisdart/nvchad-neovim:python3.10`. The `:latest` tag is the same as `python3.14`.
 
 ## Todo / Further Considerations:
 
