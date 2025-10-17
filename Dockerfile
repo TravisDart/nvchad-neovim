@@ -1,4 +1,4 @@
-ARG BASE_IMAGE=python:3.12-alpine
+ARG BASE_IMAGE=python:3.14-alpine
 FROM $BASE_IMAGE
 
 ARG GIT_AUTHOR_EMAIL
