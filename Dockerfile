@@ -6,9 +6,10 @@ ARG GIT_AUTHOR_NAME
 
 RUN apk add --no-cache git nodejs neovim neovim-doc ripgrep build-base curl \
     stylua \
-    py3-lsp-server py3-isort black \
     github-cli \
     --update
+
+RUN pip install python-lsp-server isort black
 
 # (These packages are not yet available in the main repositry.) 
 RUN apk add --no-cache --repository http://dl-cdn.alpinelinux.org/alpine/edge/community/ lua-language-server luarocks
