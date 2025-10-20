@@ -1,5 +1,5 @@
 <p align="center">
-<img src="vim_in_a_can.png" alt="vim_in_a_can" width="500" />
+<img src="vim.png" alt="vim" width="500" />
 </p>
 
 # Neovim Python IDE in a Container
