@@ -104,7 +104,7 @@ docker run -it --name neovim --volume .:/root/workspace \
 
 Note that the `GIT_AUTHOR_*` settings are generally invariant, so they can be set at build time.
 
-There is [an image on Docker Hub](https://hub.docker.com/r/travisdart/nvchad-neovim/tags) for every currently-supported version of Python: 3.9 through 3.14. To use another Python version, use an alternate image as the base container: `FROM travisdart/nvchad-neovim:python3.10`. The `:latest` tag is the same as `python3.14`.
+There is [an image on Docker Hub](https://hub.docker.com/r/travisdart/nvchad-neovim/tags) for every currently-supported version of Python (3.9 through 3.14) and for the `amd64` and `arm64` architectures. To use another Python version, use an alternate image as the base container: `FROM travisdart/nvchad-neovim:python3.10`. (The architecture is selected automatically by Docker.) The `:latest` tag is the same as `python3.14`.
 
 ## Todo / Further Considerations:
 
